@@ -21,7 +21,7 @@ team_id_list = []
 for x in current_teams:
     team_id_list.append(int(x["id"]))
 
-print(team_id_list)
+# print(team_id_list)
 
 #roster info + player IDs
 
@@ -38,26 +38,36 @@ for x in team_id_list:
     current_rosters = parsed_response_rosters["roster"]
 
     for y in current_rosters:
-        if y["position"]["abbreviation"] != "G":
-            player_id_list.append(y["person"]["id"])
-            player_name_list.append(y["person"]["fullName"])
-            player_position_list.append(y["position"]["abbreviation"])
-        else:
-            continue
+            if y["position"]["abbreviation"] != "G":
+                player_id_list.append(y["person"]["id"])
+                player_name_list.append(y["person"]["fullName"])
+                player_position_list.append(y["position"]["abbreviation"])
+            else:
+                continue
 
 # print(player_id_list)
-# print(player_name_list)
+# # print(player_name_list)
 # print(player_position_list)
 
-b=8479393
+
+
+b=8474066
 request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}?hydrate=stats(splits=statsSingleSeason)"
 response_players = requests.get(request_url)
             
 parsed_response_rosters = json.loads(response_players.text)
 
-players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
+splits = parsed_response_rosters["people"][0]["stats"][0]["splits"]
+
+
+if any(splits):
+    players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
+    print(players_stats)
+
+breakpoint()
 
 stat_headers = list(players_stats.keys())
+
 
 
 
@@ -70,7 +80,6 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
     writer = csv.DictWriter(csv_file, fieldnames=stat_headers)
     writer.writeheader() # uses fieldnames set above
 
-
     for b in player_id_list:
         request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}?hydrate=stats(splits=statsSingleSeason)"
         response_players = requests.get(request_url)
@@ -80,6 +89,17 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
         players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
 
         writer.writerow(players_stats)
+
+# Traceback (most recent call last):
+#   File "app/fantasy_hockey.py", line 78, in <module>
+#     players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
+# IndexError: list index out of range
+
+
+
+
+
+
 
 
 
