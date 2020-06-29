@@ -26,25 +26,20 @@ print(team_id_list)
 
 #roster info
 
-# for y in teams_id_list:
-
-y=15
-
-request_url = f"https://statsapi.web.nhl.com/api/v1/teams/{y}/roster"
-response_rosters = requests.get(request_url)
-    
-parsed_response_rosters = json.loads(response_rosters.text)
-
-current_rosters = parsed_response_rosters["roster"]
-
-
 player_id_list = []
-for x in current_rosters:
-    player_id_list.append(int(x["person"]["id"]))
 
+for y in team_id_list:
+    request_url = f"https://statsapi.web.nhl.com/api/v1/teams/{y}/roster"
+    response_rosters = requests.get(request_url)
+        
+    parsed_response_rosters = json.loads(response_rosters.text)
+
+    current_rosters = parsed_response_rosters["roster"]
+
+    for z in current_rosters:
+        player_id_list.append(int(z["person"]["id"]))
 
 print(player_id_list)
-
 # Instructions
 
 #TODO: list of team IDs for the code to loop through when gathering info on specific player IDs
