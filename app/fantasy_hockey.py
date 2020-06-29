@@ -52,14 +52,31 @@ for x in team_id_list:
 
 
 b=8473544
-request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}?hydrate=stats(splits=statsSingleSeason)"
+request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}/stats?stats=statsSingleSeason&season=20182019"
+
 response_players = requests.get(request_url)
             
 parsed_response_rosters = json.loads(response_players.text)
 
-players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
+players_stats = parsed_response_rosters["stats"][0]["splits"][0]["stat"]
 
 stat_headers = list(players_stats.keys())
+
+empty_list =[] #populating with zeros for data continuity
+for x in stat_headers:
+    empty_list.append("0")
+
+no_stats = {} 
+for key in stat_headers: 
+    for value in empty_list: 
+        no_stats[key] = value 
+        empty_list.remove(value) 
+        break  
+
+print(no_stats)
+print(type(no_stats))
+
+breakpoint()
 
 
 
@@ -71,19 +88,20 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
     writer.writeheader() # uses fieldnames set above
 
     for b in player_id_list:
-        request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}?hydrate=stats(splits=statsSingleSeason)"
+        request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}/stats?stats=statsSingleSeason&season=20182019"
         response_players = requests.get(request_url)
                     
         parsed_response_rosters = json.loads(response_players.text)
 
-        splits = parsed_response_rosters["people"][0]["stats"][0]["splits"] 
+        splits = parsed_response_rosters["stats"][0]["splits"]
 
         if any(splits):
-            players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
+            players_stats = parsed_response_rosters["stats"][0]["splits"][0]["stat"]
             writer.writerow(players_stats)
         else:
             continue
-        
+
+
 # Traceback (most recent call last):
 #   File "app/fantasy_hockey.py", line 78, in <module>
 #     players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
