@@ -2,6 +2,8 @@
 
 import json
 import requests
+import csv
+import os
 
 
 # request_url = "https://statsapi.web.nhl.com/api/v1/teams"
@@ -48,27 +50,33 @@ import requests
 # print(player_name_list)
 # print(player_position_list)
 
-# for b in player_id_list:
-#     request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}?hydrate=stats(splits=statsSingleSeason)"
-#     response_players = requests.get(request_url)
-        
-#     parsed_response_rosters = json.loads(response_players.text)
-
-#     players stats = parsed_response_rosters["roster"]
 
 b=8479393
 
 request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}?hydrate=stats(splits=statsSingleSeason)"
 response_players = requests.get(request_url)
-        
+            
 parsed_response_rosters = json.loads(response_players.text)
 
 players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
 
-stat_headers = list(players_stats.keys()) # TODO: assumes first day is on top, but consider sort to ensure latest day is first
+stat_headers = list(players_stats.keys())
 
+
+
+csv_file_name = "current_player_stats.csv"
+csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", csv_file_name)
+
+with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the file for writing"
+    writer = csv.DictWriter(csv_file, fieldnames=stat_headers)
+    writer.writeheader() # uses fieldnames set above
+
+
+
+
+
+    
 print(stat_headers)
-
 
 # Instructions
 
