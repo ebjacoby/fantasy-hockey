@@ -14,16 +14,41 @@ current_teams = parsed_response["teams"]
 
 # print(current_teams)
 
+# make list of team IDs
 
-id_list = []
+team_id_list = []
 for x in current_teams:
-    id_list.append(int(x["id"]))
+    team_id_list.append(int(x["id"]))
 
-print(id_list)
+print(team_id_list)
+
+
+
+#roster info
+
+# for y in teams_id_list:
+
+y=15
+
+request_url = f"https://statsapi.web.nhl.com/api/v1/teams/{y}/roster"
+response_rosters = requests.get(request_url)
+    
+parsed_response_rosters = json.loads(response_rosters.text)
+
+current_rosters = parsed_response_rosters["roster"]
+
+
+player_id_list = []
+for x in current_rosters:
+    player_id_list.append(int(x["person"]["id"]))
+
+
+print(player_id_list)
 
 # Instructions
 
-#Loop through every team, compiling a list of player ids and names (maybe separately)
+#TODO: list of team IDs for the code to loop through when gathering info on specific player IDs
+#TODO: Loop through every team, compiling a list of player ids and names (maybe separately)
 
-# Once you have list of ids, loop through list to return specific player stats and compile in csv? 
+#TODO: Once you have list of ids, loop through list to return specific player stats and compile in csv? 
 # at least just to view
