@@ -51,6 +51,7 @@ import os
 # print(player_position_list)
 
 
+
 b=8479393
 
 request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}?hydrate=stats(splits=statsSingleSeason)"
@@ -63,20 +64,20 @@ players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["s
 stat_headers = list(players_stats.keys())
 
 
-
 csv_file_name = "current_player_stats.csv"
 csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", csv_file_name)
 
 with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the file for writing"
     writer = csv.DictWriter(csv_file, fieldnames=stat_headers)
     writer.writeheader() # uses fieldnames set above
+    writer.writerow(players_stats)
 
 
 
+# writer.writerow(players_stats)
+# for p in player_id_list:
+#         writer.writerow(player_stats)
 
-
-    
-print(stat_headers)
 
 # Instructions
 
