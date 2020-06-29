@@ -63,9 +63,12 @@ response_players = requests.get(request_url)
         
 parsed_response_rosters = json.loads(response_players.text)
 
-players_stats = parsed_response_rosters["people"]
+players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
 
-print(players_stats)
+stat_headers = list(players_stats.keys()) # TODO: assumes first day is on top, but consider sort to ensure latest day is first
+
+print(stat_headers)
+
 
 # Instructions
 
