@@ -51,25 +51,15 @@ for x in team_id_list:
 
 
 
-b=8474066
+b=8473544
 request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}?hydrate=stats(splits=statsSingleSeason)"
 response_players = requests.get(request_url)
             
 parsed_response_rosters = json.loads(response_players.text)
 
-splits = parsed_response_rosters["people"][0]["stats"][0]["splits"]
-
-
-if any(splits):
-    players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
-    print(players_stats)
-
-breakpoint()
+players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
 
 stat_headers = list(players_stats.keys())
-
-
-
 
 
 
@@ -86,10 +76,14 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
                     
         parsed_response_rosters = json.loads(response_players.text)
 
-        players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
+        splits = parsed_response_rosters["people"][0]["stats"][0]["splits"] 
 
-        writer.writerow(players_stats)
-
+        if any(splits):
+            players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
+            writer.writerow(players_stats)
+        else:
+            continue
+        
 # Traceback (most recent call last):
 #   File "app/fantasy_hockey.py", line 78, in <module>
 #     players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
