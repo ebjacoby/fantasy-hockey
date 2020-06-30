@@ -157,46 +157,29 @@ for i in seasons_list:
 
 s = seasons_dict
 
-goal_proj = s[0]["goals"] * .2 + s[1]["goals"] * .3 + s[2]["goals"] * .5
-assist_proj = s[0]["assists"] * .2 + s[1]["assists"] * .3 + s[2]["assists"] * .5
-shots_proj = s[0]["shots"] * .2 + s[1]["shots"] * .3 + s[2]["shots"] * .5
-blocked_proj = s[0]["blocked"] * .2 + s[1]["blocked"] * .3 + s[2]["blocked"] * .5
-PPG_proj = s[0]["powerPlayGoals"] * .2 + s[1]["powerPlayGoals"] * .3 + s[2]["powerPlayGoals"] * .5
-PPA_proj = ((stats[0]["powerPlayPoints"]) - (stats[0]["powerPlayGoals"])) * .2 + ((stats[1]["powerPlayPoints"]) - (stats[1]["powerPlayGoals"])) * .3 + ((stats[2]["powerPlayPoints"]) - (stats[2]["powerPlayGoals"])) * .5
-
-three_year_season_score = float(goal_proj * 0.75 + assist_proj * 0.625 + shots_proj * 0.075 + stats_proj * 0.05 + PPG_proj * 0.15 + PPA_proj * 0.1
+def to_twodec(my_num):
+    return "{0:,.2f}".format(my_num)
 
 
+goal_proj = s[third_last_season]["goals"] * .2 + s[second_last_season]["goals"] * .3 + s[last_season]["goals"] * .5
+assist_proj = s[third_last_season]["assists"] * .2 + s[second_last_season]["assists"] * .3 + s[last_season]["assists"] * .5
+shots_proj = s[third_last_season]["shots"] * .2 + s[second_last_season]["shots"] * .3 + s[last_season]["shots"] * .5
+blocked_proj = s[third_last_season]["blocked"] * .2 + s[second_last_season]["blocked"] * .3 + s[last_season]["blocked"] * .5
+PPG_proj = s[third_last_season]["powerPlayGoals"] * .2 + s[second_last_season]["powerPlayGoals"] * .3 + s[last_season]["powerPlayGoals"] * .5
+PPA_proj = ((s[third_last_season]["powerPlayPoints"]) - (s[third_last_season]["powerPlayGoals"])) * .2 + ((s[second_last_season]["powerPlayPoints"]) - (s[second_last_season]["powerPlayGoals"])) * .3 + ((s[last_season]["powerPlayPoints"]) - (s[last_season]["powerPlayGoals"])) * .5
 
+three_year_season_score = float(goal_proj * 0.75 + assist_proj * 0.625 + shots_proj * 0.075 + blocked_proj * 0.05 + PPG_proj * 0.15 + PPA_proj * 0.1)
+print("----------------------")
+print("----------------------")
+print("According to a three-year weighted average, in  " + player + " will achieve:")
+print("----------------------")
+print(str(goal_proj) + " goals...")
+print(str(assist_proj) + " assists...")
+print(str(shots_proj) + " shots on goal...")
+print(str(blocked_proj) + " blocked shots...")
+print(str(PPG_proj) + " powerplay goals...")
+print(str(PPA_proj) + " powerplay assists...")
+print("----------------------")
+print(player + " also has a current 3-year seasons score of " + str(to_twodec(three_year_season_score)))
+print("----------------------")
 
-
-
-
-
-
-breakpoint()
-season_score_list = []
-
-for x in seasons_list:
-    stats = seasons_dict[x]
-    season_score = float(to_twodec((stats["goals"] * 0.75) + (stats["assists"] * 0.625) + (stats["shots"] * 0.075) + (stats["blocked"] * 0.05) + (stats["powerPlayGoals"] * 0.15) + (((stats["powerPlayPoints"]) - (stats["powerPlayGoals"])) * 0.10)))
-    season_score_list.append(season_score)
-
-final_list = []
-for n, p, s in zip(player_name_list, player_position_list, season_score_list):
-    final = { 'player name': n, 'player position': p, 'season score': s}
-    final_list.append(final)
-
-final_list_sorted = sorted(final_list, key=lambda player: player['season score'], reverse=True)
-
-new_stat_headers = ["player name", "player position", "season score"]
-
-csv_file_name = player + ".csv"
-csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", csv_file_name)
-
-with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the file for writing"
-    writer = csv.DictWriter(csv_file, fieldnames=new_stat_headers)
-    writer.writeheader() # uses fieldnames set above
-
-    for x in final_list_sorted:
-        writer.writerow(x)
