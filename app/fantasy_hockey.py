@@ -112,43 +112,28 @@ yeartwo = str(int(x[4] + x[5] + x[6] + x[7]) - 1)
 last_season = int(yearone + yeartwo)
 second_last_season = int(yearzero + yearone)
 
-#write to csv and organize players{} dictionary
-csv_file_name = "current_player_stats.csv"
-csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", csv_file_name)
+for i,b in enumerate(player_id_list):
+    request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}/stats?stats=statsSingleSeason&season={last_season}"
+    response_players = requests.get(request_url)
+                
+    parsed_response_rosters = json.loads(response_players.text)
 
-with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the file for writing"
-    writer = csv.DictWriter(csv_file, fieldnames=stat_headers)
-    writer.writeheader() # uses fieldnames set above
+    splits = parsed_response_rosters["stats"][0]["splits"]
 
-    for i,b in enumerate(player_id_list):
-        request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}/stats?stats=statsSingleSeason&season={last_season}"
-        response_players = requests.get(request_url)
-                    
-        parsed_response_rosters = json.loads(response_players.text)
-
-        splits = parsed_response_rosters["stats"][0]["splits"]
-
-        if any(splits):
-            #for dictionary
-            players_stats = parsed_response_rosters["stats"][0]["splits"][0]["stat"]
-            player_info = {}
-            player_info["playerid"] = b
-            player_info["playerposition"] = player_position_list[i]
-            player_info["stats"] = players_stats
-            players[player_name_list[i]] = player_info
-
-            #for csv
-            players_stats["playername"] = player_name_list[i]
-            players_stats["playerid"] = b
-            players_stats["playerposition"] = player_position_list[i]
-            writer.writerow(players_stats)
-        else:
-            player_info = {}
-            player_info["playerid"] = b
-            player_info["playerposition"] = player_position_list[i]
-            player_info["stats"] = no_stats
-            players[player_name_list[i]] = player_info
-            writer.writerow(no_stats)
+    if any(splits):
+        #for dictionary
+        players_stats = parsed_response_rosters["stats"][0]["splits"][0]["stat"]
+        player_info = {}
+        player_info["playerid"] = b
+        player_info["playerposition"] = player_position_list[i]
+        player_info["stats"] = players_stats
+        players[player_name_list[i]] = player_info
+    else:
+        player_info = {}
+        player_info["playerid"] = b
+        player_info["playerposition"] = player_position_list[i]
+        player_info["stats"] = no_stats
+        players[player_name_list[i]] = player_info
 
 
 #TODO: calculate game score per season for two seasons? for all players. 
