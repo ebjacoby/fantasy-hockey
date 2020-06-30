@@ -136,11 +136,8 @@ for n, i in zip(player_name_list, player_id_list):
     final = { 'player name': n, 'player id': i}
     name_id_dict.append(final)
 
-player_id = p["id"] for p in name_id_dict if str(p["id"]) = player
+player_id = [p["player id"] for p in name_id_dict if str(p["player name"]) == player]
 
-print(player_id)
-
-breakpoint()
 
 for i,b in enumerate(player_id_list):
     request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}/stats?stats=statsSingleSeason&season={last_season}"
