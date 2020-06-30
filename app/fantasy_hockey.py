@@ -115,7 +115,7 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
             writer.writerow(no_stats)
 
 while True: 
-    selected_season = input("Please input a season (format: year1year2 e.g. '20182019' or '20172018'): ") #> "9" (string) 
+    selected_season = input("Please input the season for which you would like to make predictions (format: year1year2 e.g. '20182019' or '20192020'): ") #> "9" (string) 
     selected_season_length = len(selected_season)
     if not selected_season.isnumeric():
         print("-----------------------")
@@ -130,10 +130,21 @@ while True:
     else:
         break
 
-#calculate game score per season for two seasons? for all players. 
-#Order by game score for who to pick in the next season
+def split(x): 
+    return [char for char in x]
+    # return yearone 
+    # return yeartwo
 
-print(selected_season)
+x = split(selected_season)
+
+yearone = int(x[0] + x[1] + x[2] + x[3]) - 1
+yeartwo = int(x[4] + x[5] + x[6] + x[7]) - 1 
+
+
+#TODO: calculate game score per season for two seasons? for all players. 
+#TODO: Order by game score for who to pick in the next season
+
+# print(selected_season)
 
 
 # try:
