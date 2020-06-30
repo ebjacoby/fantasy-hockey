@@ -55,7 +55,7 @@ player__list = player_position_list[:2]
 
 ID = os.environ.get("ID", "OOPS, please set env var called 'ID'")
 
-#get header data for all players - this ID number can stay static
+#get header data for all players - the ID number and season can stay static
 request_url = f"https://statsapi.web.nhl.com/api/v1/people/{ID}/stats?stats=statsSingleSeason&season=20182019"
 
 response_players = requests.get(request_url)
@@ -148,8 +148,23 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
 #TODO: calculate game score per season for two seasons? for all players. 
 #TODO: Order by game score for who to pick in the next season
 
-print(players)
+def to_twodec(my_num):
+    return "{0:,.2f}".format(my_num)
 
+season_score_list = []
+
+for x in player_name_list:
+    stats = players[x]["stats"]
+    season_score = to_twodec(float((stats["goals"] * 0.75) + (stats["assists"] * 0.625) + (stats["shots"] * 0.075) + (stats["blocked"] * 0.05) + (stats["powerPlayGoals"] * 0.15) + (((stats["powerPlayPoints"]) - (stats["powerPlayGoals"])) * 0.10)))
+    season_score_list.append(season_score)
+
+score_by_name = dict(zip(player_name_list, season_score_list))
+print(type(score_by_name))
+print(score_by_name)
+
+#Player Game Score = (0.75 * G) + (0.7 * A1) + (0.55 * A2) + (0.075 * SOG) + 
+# (0.05 * BLK) + (0.15 * PD) – (0.15 * PT) + (0.01 * FOW) – (0.01 * FOL) + 
+# (0.05 * CF) – (0.05 * CA) + (0.15 * GF) – (0.15* GA)
 
 # try:
 #     symbol = input("Please input a stock identifier: ")
