@@ -84,19 +84,19 @@ players = {}
 
 #note years of season
 while True: 
+    print("------------------------------")
+    print("------------------------------")
     print("Please input the hockey season for which you would like to make predictions...")
     print("Also, note that this model is designed to predict scores after seasons already played...")
-    selected_season = input("(format season: year1year2 e.g. '20182019' or '20192020'): ") #> "9" (string) 
+    selected_season = input("format season: year1year2 e.g. '20182019' or '20192020': ") #> "9" (string) 
     selected_season_length = len(selected_season)
     if not selected_season.isnumeric():
         print("-----------------------")
         print("Oops! Looks like the formatting wasn't correct.")
-        print("-----------------------")
         continue
     elif (selected_season_length != 8):
         print("-----------------------")
         print("Oops! Looks like the formatting wasn't correct.")
-        print("-----------------------")
         continue
     else:
         break
@@ -156,9 +156,7 @@ for n, p, s in zip(player_name_list, player_position_list, season_score_list):
 
 final_list_sorted = sorted(final_list, key=lambda player: player['season score'], reverse=True)
 
-
 new_stat_headers = ["player name", "player position", "season score"]
-
 
 csv_file_name = "current_player_stats.csv"
 csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", csv_file_name)
