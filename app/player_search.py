@@ -33,6 +33,7 @@ player_id_list = []
 player_name_list = []
 player_position_list = []
 
+#find IDs of teams
 for x in team_id_list:
     request_url = f"https://statsapi.web.nhl.com/api/v1/teams/{x}/roster"
     response_rosters = requests.get(request_url)
@@ -140,6 +141,7 @@ player_id = [p["player id"] for p in name_id_dict if str(p["player name"]) == pl
 
 seasons_dict = {}
 
+#Get data per year 
 for i in seasons_list:
     request_url = f"https://statsapi.web.nhl.com/api/v1/people/{player_id}/stats?stats=statsSingleSeason&season={i}"
     response_players = requests.get(request_url)
@@ -160,7 +162,7 @@ s = seasons_dict
 def to_twodec(my_num):
     return "{0:,.2f}".format(my_num)
 
-
+#calculate weighted averages from .5 (most recent), .3 (two seasons ago), .2 (three seasons ago)
 goal_proj = s[third_last_season]["goals"] * .2 + s[second_last_season]["goals"] * .3 + s[last_season]["goals"] * .5
 assist_proj = s[third_last_season]["assists"] * .2 + s[second_last_season]["assists"] * .3 + s[last_season]["assists"] * .5
 shots_proj = s[third_last_season]["shots"] * .2 + s[second_last_season]["shots"] * .3 + s[last_season]["shots"] * .5
@@ -169,6 +171,9 @@ PPG_proj = s[third_last_season]["powerPlayGoals"] * .2 + s[second_last_season]["
 PPA_proj = ((s[third_last_season]["powerPlayPoints"]) - (s[third_last_season]["powerPlayGoals"])) * .2 + ((s[second_last_season]["powerPlayPoints"]) - (s[second_last_season]["powerPlayGoals"])) * .3 + ((s[last_season]["powerPlayPoints"]) - (s[last_season]["powerPlayGoals"])) * .5
 
 three_year_season_score = float(goal_proj * 0.75 + assist_proj * 0.625 + shots_proj * 0.075 + blocked_proj * 0.05 + PPG_proj * 0.15 + PPA_proj * 0.1)
+
+
+#print results for view
 print("----------------------")
 print("----------------------")
 print("According to a three-year weighted average, in  " + player + " will achieve:")

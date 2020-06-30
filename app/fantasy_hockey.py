@@ -4,11 +4,9 @@ import csv
 from dotenv import load_dotenv
 import os
 
-
 import pprint
 
 load_dotenv()
-
 
 request_url = "https://statsapi.web.nhl.com/api/v1/teams"
 response = requests.get(request_url)
@@ -87,8 +85,7 @@ while True:
     print("------------------------------")
     print("------------------------------")
     print("Please input the hockey season for which you would like to make predictions...")
-    print("Also, note that this model is designed to predict scores after seasons already played...")
-    selected_season = input("format season: year1year2 e.g. '20182019' or '20192020': ") #> "9" (string) 
+    selected_season = input("Format season: year1year2 e.g. '20182019' or '20192020': ") #> "9" (string) 
     selected_season_length = len(selected_season)
     if not selected_season.isnumeric():
         print("-----------------------")
@@ -112,6 +109,7 @@ yeartwo = str(int(x[4] + x[5] + x[6] + x[7]) - 1)
 last_season = int(yearone + yeartwo)
 second_last_season = int(yearzero + yearone)
 
+#create new dictionary with all players detailed stats
 for i,b in enumerate(player_id_list):
     request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}/stats?stats=statsSingleSeason&season={last_season}"
     response_players = requests.get(request_url)
@@ -136,12 +134,10 @@ for i,b in enumerate(player_id_list):
         players[player_name_list[i]] = player_info
 
 
-#TODO: calculate game score per season for two seasons? for all players. 
-#TODO: Order by game score for who to pick in the next season
-
 def to_twodec(my_num):
     return "{0:,.2f}".format(my_num)
 
+#draw on the new dictionary to calculate season_score
 season_score_list = []
 
 for x in player_name_list:
@@ -149,15 +145,18 @@ for x in player_name_list:
     season_score = float(to_twodec((stats["goals"] * 0.75) + (stats["assists"] * 0.625) + (stats["shots"] * 0.075) + (stats["blocked"] * 0.05) + (stats["powerPlayGoals"] * 0.15) + (((stats["powerPlayPoints"]) - (stats["powerPlayGoals"])) * 0.10)))
     season_score_list.append(season_score)
 
+#create new dictionary to lineup season score with name and position
 final_list = []
 for n, p, s in zip(player_name_list, player_position_list, season_score_list):
     final = { 'player name': n, 'player position': p, 'season score': s}
     final_list.append(final)
 
+#order the list of player's seasons scores
 final_list_sorted = sorted(final_list, key=lambda player: player['season score'], reverse=True)
-
+final_list_sorted_twohundred = final_list_sorted[:200]
 new_stat_headers = ["player name", "player position", "season score"]
 
+#write to csv
 csv_file_name = "current_player_stats.csv"
 csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", csv_file_name)
 
@@ -165,5 +164,9 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
     writer = csv.DictWriter(csv_file, fieldnames=new_stat_headers)
     writer.writeheader() # uses fieldnames set above
 
-    for x in final_list_sorted:
+    for x in final_list_sorted_twohundred:
         writer.writerow(x)
+
+print("---------------------")
+print("View top 200 players in " + csv_file_name)
+print("---------------------")
