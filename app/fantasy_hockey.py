@@ -1,11 +1,14 @@
-
-
 import json
 import requests
 import csv
+from dotenv import load_dotenv
 import os
 
-import pandas as pd 
+
+import pprint
+
+load_dotenv()
+
 
 request_url = "https://statsapi.web.nhl.com/api/v1/teams"
 response = requests.get(request_url)
@@ -46,14 +49,13 @@ for x in team_id_list:
             else:
                 continue
 
-player_id_list = player_id_list[:10]
-player_name_list = player_name_list[:10]
-player__list = player_position_list[:10]
+player_id_list = player_id_list[:2]
+player_name_list = player_name_list[:2]
+player__list = player_position_list[:2]
 
+ID = os.environ.get("ID", "OOPS, please set env var called 'ID'")
 
-
-b=8473544
-request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}/stats?stats=statsSingleSeason&season=20182019"
+request_url = f"https://statsapi.web.nhl.com/api/v1/people/{ID}/stats?stats=statsSingleSeason&season=20182019"
 
 response_players = requests.get(request_url)
             
@@ -112,59 +114,31 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
         else:
             writer.writerow(no_stats)
 
-print(players)
+while True: 
+    selected_season = input("Please input a season (format: year1year2 e.g. '20182019' or '20172018'): ") #> "9" (string) 
+    selected_season_length = len(selected_season)
+    if not selected_season.isnumeric():
+        print("-----------------------")
+        print("Oops! Looks like the formatting wasn't correct.")
+        print("-----------------------")
+        continue
+    elif (selected_season_length != 8):
+        print("-----------------------")
+        print("Oops! Looks like the formatting wasn't correct.")
+        print("-----------------------")
+        continue
+    else:
+        break
+
+#calculate game score per season for two seasons? for all players. 
+#Order by game score for who to pick in the next season
+
+print(selected_season)
 
 
-    # rows = zip(player_id_list, player_name_list, player_position_list)
-
-    # with open(csv_file_path, "w", newline='') as csv_file:
-    # writer = csv.writer(csv_file)
-    # for row in rows:
-    #     writer.writerow(row)
-
-
-
-
-
-
-
-
-
-
-# f = open(csv_file_path, 'r')
-# reader = csv.DictReader(f)
-
-# dict_list= {}
-
-# for row in reader:
-#     dict_list[row[0]] = {'timeOnIce':row[1],'assists':row[2],'goals':row[3],'pim':row[4],'shots':row[5],'games':row[6],'hits':row[7],'powerPlayGoals':row[8],'powerPlayPoints':row[9],'powerPlayTimeOnIce':row[10],'evenTimeOnIce':row[11],'penaltyMinutes':row[12],'faceOffPct':row[13],'shotPct':row[14],'gameWinningGoals':row[15],'overTimeGoals':row[16],'shortHandedGoals':row[17],'shortHandedPoints':row[18],'shortHandedTimeOnIce':row[19],'blocked':row[20],'plusMinus':row[21],'points':row[22],'shifts':row[23],'timeOnIcePerGame':row[24],'evenTimeOnIcePerGame':row[25],'shortHandedTimeOnIcePerGame':row[26],'powerPlayTimeOnIcePerGame':row[27]}
-
-# print(dict_list)
-
-
-
-
-
-
-
-# Traceback (most recent call last):
-#   File "app/fantasy_hockey.py", line 78, in <module>
-#     players_stats = parsed_response_rosters["people"][0]["stats"][0]["splits"][0]["stat"]
-# IndexError: list index out of range
-
-
-
-
-
-
-
-
-
-
-# Instructions
-
-#TODO: list of team IDs for the code to loop through when gathering info on specific player IDs ### DONEzxxxxxxx
-#TODO: Loop through every team, compiling a list of player ids and names (maybe separately)#### DONExxxxxxxx
-
-#TODO: Once you have list of ids, loop through list to return specific player stats and compile in csv? 
-# at least just to view
+# try:
+#     symbol = input("Please input a stock identifier: ")
+#     symbol_length = len(symbol)
+#     if (symbol_length < 3 or symbol_length > 5) or not symbol.isalpha():
+#         print("The system is expecting a properly-formed stock symbol like 'MSFT' or 'IBM' - please try again!")
+#         exit()
