@@ -49,9 +49,9 @@ for x in team_id_list:
             else:
                 continue
 
-# player_id_list = player_id_list[:8]
-# player_name_list = player_name_list[:8]
-# player__list = player_position_list[:8]
+# player_id_list = player_id_list[:10]
+# player_name_list = player_name_list[:10]
+# player_list = player_position_list[:10]
 
 ID = os.environ.get("ID", "OOPS, please set env var called 'ID'")
 
@@ -66,7 +66,7 @@ players_stats = parsed_response_rosters["stats"][0]["splits"][0]["stat"]
 
 stat_headers = list(players_stats.keys())
 
-stat_headers.extend(["playername", "playerid", "playerposition"])
+# stat_headers.extend(["playername", "playerid", "playerposition"])
 
 empty_list =[] #populating with zeros for data continuity
 for x in stat_headers:
@@ -151,21 +151,21 @@ for x in player_name_list:
 
 final_list = []
 for n, p, s in zip(player_name_list, player_position_list, season_score_list):
-    final = { 'player name': n, 'player position': p, 'season_score': s}
+    final = { 'player name': n, 'player position': p, 'season score': s}
     final_list.append(final)
 
-final_list_sorted = sorted(final_list, key=lambda player: player['season_score'], reverse=True)
-
-pprint.pprint(final_list_sorted)
+final_list_sorted = sorted(final_list, key=lambda player: player['season score'], reverse=True)
 
 
-#Player Game Score = (0.75 * G) + (0.7 * A1) + (0.55 * A2) + (0.075 * SOG) + 
-# (0.05 * BLK) + (0.15 * PD) – (0.15 * PT) + (0.01 * FOW) – (0.01 * FOL) + 
-# (0.05 * CF) – (0.05 * CA) + (0.15 * GF) – (0.15* GA)
+new_stat_headers = ["player name", "player position", "season score"]
 
-# try:
-#     symbol = input("Please input a stock identifier: ")
-#     symbol_length = len(symbol)
-#     if (symbol_length < 3 or symbol_length > 5) or not symbol.isalpha():
-#         print("The system is expecting a properly-formed stock symbol like 'MSFT' or 'IBM' - please try again!")
-#         exit()
+
+csv_file_name = "current_player_stats.csv"
+csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", csv_file_name)
+
+with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the file for writing"
+    writer = csv.DictWriter(csv_file, fieldnames=new_stat_headers)
+    writer.writeheader() # uses fieldnames set above
+
+    for x in final_list_sorted:
+        writer.writerow(x)
