@@ -49,9 +49,9 @@ for x in team_id_list:
             else:
                 continue
 
-player_id_list = player_id_list[:8]
-player_name_list = player_name_list[:8]
-player__list = player_position_list[:8]
+# player_id_list = player_id_list[:8]
+# player_name_list = player_name_list[:8]
+# player__list = player_position_list[:8]
 
 ID = os.environ.get("ID", "OOPS, please set env var called 'ID'")
 
@@ -70,7 +70,7 @@ stat_headers.extend(["playername", "playerid", "playerposition"])
 
 empty_list =[] #populating with zeros for data continuity
 for x in stat_headers:
-    empty_list.append("0")
+    empty_list.append(0)
 
 no_stats = {} 
 for key in stat_headers: 
@@ -147,10 +147,9 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
             player_info["playerid"] = b
             player_info["playerposition"] = player_position_list[i]
             player_info["stats"] = no_stats
+            players[player_name_list[i]] = player_info
             writer.writerow(no_stats)
 
-pprint.pprint(players)
-breakpoint()
 
 #TODO: calculate game score per season for two seasons? for all players. 
 #TODO: Order by game score for who to pick in the next season
@@ -162,18 +161,17 @@ season_score_list = []
 
 for x in player_name_list:
     stats = players[x]["stats"]
-    season_score = to_twodec(float((stats["goals"] * 0.75) + (stats["assists"] * 0.625) + (stats["shots"] * 0.075) + (stats["blocked"] * 0.05) + (stats["powerPlayGoals"] * 0.15) + (((stats["powerPlayPoints"]) - (stats["powerPlayGoals"])) * 0.10)))
+    season_score = float(to_twodec((stats["goals"] * 0.75) + (stats["assists"] * 0.625) + (stats["shots"] * 0.075) + (stats["blocked"] * 0.05) + (stats["powerPlayGoals"] * 0.15) + (((stats["powerPlayPoints"]) - (stats["powerPlayGoals"])) * 0.10)))
     season_score_list.append(season_score)
 
-
 final_list = []
-for n, i, s in zip(player_name_list, player_id_list, season_score_list):
-    final = { 'player name': n, 'player id': i, 'season_score': s}
+for n, p, s in zip(player_name_list, player_position_list, season_score_list):
+    final = { 'player name': n, 'player position': p, 'season_score': s}
     final_list.append(final)
 
-final_list_sorted = sorted(final_list, key=lambda k: k['season_score'])
+final_list_sorted = sorted(final_list, key=lambda player: player['season_score'], reverse=True)
 
-print(final_list_sorted)
+pprint.pprint(final_list_sorted)
 
 
 #Player Game Score = (0.75 * G) + (0.7 * A1) + (0.55 * A2) + (0.075 * SOG) + 
