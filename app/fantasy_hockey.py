@@ -55,6 +55,7 @@ player__list = player_position_list[:2]
 
 ID = os.environ.get("ID", "OOPS, please set env var called 'ID'")
 
+#get header data for all players - this ID number can stay static
 request_url = f"https://statsapi.web.nhl.com/api/v1/people/{ID}/stats?stats=statsSingleSeason&season=20182019"
 
 response_players = requests.get(request_url)
@@ -81,6 +82,36 @@ for key in stat_headers:
 #main dictionary to use
 players = {}
 
+#note years of season
+while True: 
+    print("Please input the hockey season for which you would like to make predictions...")
+    print("Also, note that this model is designed to predict scores after seasons already played...")
+    selected_season = input("(format season: year1year2 e.g. '20182019' or '20192020'): ") #> "9" (string) 
+    selected_season_length = len(selected_season)
+    if not selected_season.isnumeric():
+        print("-----------------------")
+        print("Oops! Looks like the formatting wasn't correct.")
+        print("-----------------------")
+        continue
+    elif (selected_season_length != 8):
+        print("-----------------------")
+        print("Oops! Looks like the formatting wasn't correct.")
+        print("-----------------------")
+        continue
+    else:
+        break
+
+def split(x): 
+    return [char for char in x]
+
+x = split(selected_season)
+yearzero = str(int(x[0] + x[1] + x[2] + x[3]) - 2)
+yearone = str(int(x[0] + x[1] + x[2] + x[3]) - 1)
+yeartwo = str(int(x[4] + x[5] + x[6] + x[7]) - 1)
+
+last_season = int(yearone + yeartwo)
+second_last_season = int(yearzero + yearone)
+
 #write to csv and organize players{} dictionary
 csv_file_name = "current_player_stats.csv"
 csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", csv_file_name)
@@ -90,7 +121,7 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
     writer.writeheader() # uses fieldnames set above
 
     for i,b in enumerate(player_id_list):
-        request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}/stats?stats=statsSingleSeason&season=20182019"
+        request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}/stats?stats=statsSingleSeason&season={last_season}"
         response_players = requests.get(request_url)
                     
         parsed_response_rosters = json.loads(response_players.text)
@@ -114,37 +145,10 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
         else:
             writer.writerow(no_stats)
 
-while True: 
-    selected_season = input("Please input the season for which you would like to make predictions (format: year1year2 e.g. '20182019' or '20192020'): ") #> "9" (string) 
-    selected_season_length = len(selected_season)
-    if not selected_season.isnumeric():
-        print("-----------------------")
-        print("Oops! Looks like the formatting wasn't correct.")
-        print("-----------------------")
-        continue
-    elif (selected_season_length != 8):
-        print("-----------------------")
-        print("Oops! Looks like the formatting wasn't correct.")
-        print("-----------------------")
-        continue
-    else:
-        break
-
-def split(x): 
-    return [char for char in x]
-    # return yearone 
-    # return yeartwo
-
-x = split(selected_season)
-
-yearone = int(x[0] + x[1] + x[2] + x[3]) - 1
-yeartwo = int(x[4] + x[5] + x[6] + x[7]) - 1 
-
-
 #TODO: calculate game score per season for two seasons? for all players. 
 #TODO: Order by game score for who to pick in the next season
 
-# print(selected_season)
+print(players)
 
 
 # try:
