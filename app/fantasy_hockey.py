@@ -5,6 +5,7 @@ import requests
 import csv
 import os
 
+import pandas as pd 
 
 request_url = "https://statsapi.web.nhl.com/api/v1/teams"
 response = requests.get(request_url)
@@ -45,9 +46,9 @@ for x in team_id_list:
             else:
                 continue
 
-# print(player_id_list)
-# # print(player_name_list)
-# print(player_position_list)
+player_id_list = player_id_list[:3]
+player_name_list = player_name_list[:3]
+player__list = player_position_list[:3]
 
 
 
@@ -62,6 +63,8 @@ players_stats = parsed_response_rosters["stats"][0]["splits"][0]["stat"]
 
 stat_headers = list(players_stats.keys())
 
+stat_headers.extend(["playername", "playerid", "playerposition"])
+
 empty_list =[] #populating with zeros for data continuity
 for x in stat_headers:
     empty_list.append("0")
@@ -73,10 +76,11 @@ for key in stat_headers:
         empty_list.remove(value) 
         break  
 
-print(no_stats)
-print(type(no_stats))
+player_info = {}
 
-breakpoint()
+
+
+
 
 
 
@@ -87,7 +91,7 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
     writer = csv.DictWriter(csv_file, fieldnames=stat_headers)
     writer.writeheader() # uses fieldnames set above
 
-    for b in player_id_list:
+    for i,b in enumerate(player_id_list):
         request_url = f"https://statsapi.web.nhl.com/api/v1/people/{b}/stats?stats=statsSingleSeason&season=20182019"
         response_players = requests.get(request_url)
                     
@@ -97,9 +101,43 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
 
         if any(splits):
             players_stats = parsed_response_rosters["stats"][0]["splits"][0]["stat"]
-            writer.writerow(players_stats)
-        else:
-            continue
+        #     players_stats["playername"] = player_name_list[i]
+        #     players_stats["playerid"] = b
+        #     players_stats["playerposition"] = player_position_list[i]
+        #     writer.writerow(players_stats)
+        # else:
+        #     writer.writerow(no_stats)
+
+    # rows = zip(player_id_list, player_name_list, player_position_list)
+
+    # with open(csv_file_path, "w", newline='') as csv_file:
+    # writer = csv.writer(csv_file)
+    # for row in rows:
+    #     writer.writerow(row)
+
+
+
+
+
+
+
+
+
+
+# f = open(csv_file_path, 'r')
+# reader = csv.DictReader(f)
+
+# dict_list= {}
+
+# for row in reader:
+#     dict_list[row[0]] = {'timeOnIce':row[1],'assists':row[2],'goals':row[3],'pim':row[4],'shots':row[5],'games':row[6],'hits':row[7],'powerPlayGoals':row[8],'powerPlayPoints':row[9],'powerPlayTimeOnIce':row[10],'evenTimeOnIce':row[11],'penaltyMinutes':row[12],'faceOffPct':row[13],'shotPct':row[14],'gameWinningGoals':row[15],'overTimeGoals':row[16],'shortHandedGoals':row[17],'shortHandedPoints':row[18],'shortHandedTimeOnIce':row[19],'blocked':row[20],'plusMinus':row[21],'points':row[22],'shifts':row[23],'timeOnIcePerGame':row[24],'evenTimeOnIcePerGame':row[25],'shortHandedTimeOnIcePerGame':row[26],'powerPlayTimeOnIcePerGame':row[27]}
+
+# print(dict_list)
+
+
+
+
+
 
 
 # Traceback (most recent call last):
