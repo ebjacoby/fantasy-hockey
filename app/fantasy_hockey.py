@@ -46,9 +46,9 @@ for x in team_id_list:
             else:
                 continue
 
-player_id_list = player_id_list[:3]
-player_name_list = player_name_list[:3]
-player__list = player_position_list[:3]
+player_id_list = player_id_list[:10]
+player_name_list = player_name_list[:10]
+player__list = player_position_list[:10]
 
 
 
@@ -76,14 +76,10 @@ for key in stat_headers:
         empty_list.remove(value) 
         break  
 
-player_info = {}
+#main dictionary to use
+players = {}
 
-
-
-
-
-
-
+#write to csv and organize players{} dictionary
 csv_file_name = "current_player_stats.csv"
 csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", csv_file_name)
 
@@ -100,13 +96,24 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
         splits = parsed_response_rosters["stats"][0]["splits"]
 
         if any(splits):
+            #for dictionary
             players_stats = parsed_response_rosters["stats"][0]["splits"][0]["stat"]
-        #     players_stats["playername"] = player_name_list[i]
-        #     players_stats["playerid"] = b
-        #     players_stats["playerposition"] = player_position_list[i]
-        #     writer.writerow(players_stats)
-        # else:
-        #     writer.writerow(no_stats)
+            player_info = {}
+            player_info["playerid"] = b
+            player_info["playerposition"] = player_position_list[i]
+            player_info["stats"] = players_stats
+            players[player_name_list[i]] = player_info
+
+            #for csv
+            players_stats["playername"] = player_name_list[i]
+            players_stats["playerid"] = b
+            players_stats["playerposition"] = player_position_list[i]
+            writer.writerow(players_stats)
+        else:
+            writer.writerow(no_stats)
+
+print(players)
+
 
     # rows = zip(player_id_list, player_name_list, player_position_list)
 
