@@ -53,7 +53,7 @@ for x in team_id_list:
 
 ID = os.environ.get("ID", "OOPS, please set env var called 'ID'")
 
-#get header data for all players - the ID number and season can stay static
+#get header data for all players - the ID number AND SEASON can remain static
 request_url = f"https://statsapi.web.nhl.com/api/v1/people/{ID}/stats?stats=statsSingleSeason&season=20182019"
 
 response_players = requests.get(request_url)
